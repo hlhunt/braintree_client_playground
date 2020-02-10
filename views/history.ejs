@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Order History</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+</head>
+<body>
+	<div class="container">
+		<h1 class="text-center">Last 3 Months of Transactions</h1>
+		<table class="table border">
+		  <thead>
+		    <tr>
+		      <th scope="col">#</th>
+		      <th scope="col">ID</th>
+		      <th scope="col">Type</th>
+		      <th scope="col">Amount</th>
+		      <th scope="col">Status</th>
+		      <th scope="col">Customer ID</th>
+		      <th scope="col">Payment Method</th>
+		      <th scope="col">Created At</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		  	<% for (var i = 0; i < transactions.length; i++) { %>
+			  	<tr>
+			      <th scope="row"><%= i + 1 %></th>
+			      <td><a href="https://sandbox.braintreegateway.com/merchants/vgpqg5772jkq97q2/transactions/<%= transactions[i].id %>" target="_blank"><%= transactions[i].id %></a></td>
+			      <td><%= transactions[i].type %></td>
+			      <td><%= transactions[i].amount %></td>
+			      <td><%= transactions[i].status %></td>
+			      <td><a href="https://sandbox.braintreegateway.com/merchants/vgpqg5772jkq97q2/transactions/<%= transactions[i].customer.id %>"><%= transactions[i].customer.id %></a></td>
+			      <td><%= transactions[i].paymentInstrumentType %></td>
+			      <td><%= transactions[i].createdAt %></td>
+			    </tr>
+		  	<% } %>
+		  </tbody>
+		</table>
+		<hr>
+		<div class="row justify-content-between">
+			<div class="col">
+				<h2>Total Count: <%= transactions.length %></h2>
+			</div>
+			<div class="col text-right">
+				<h2><a href="/">Go Back</a></h2>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

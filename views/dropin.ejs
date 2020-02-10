@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+    <script src="https://js.braintreegateway.com/web/dropin/1.22.0/js/dropin.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-between align-items-end">
+        <div class="col">
+          <h1 class="mb-2">Mock Shop</h1>
+        </div>
+        <div class="col text-right mb-2">
+          <a href="/">Go Back</a>
+        </div>
+      </div>
+
+      <!-- Deal with error messages if present -->
+      <% if (messages && messages.length > 0) { -%>
+         <div class="alert alert-danger" role="alert">
+          <% for (var i = 0; i < messages.length; i++) { -%>
+            <%= messages[i].msg %>
+          <% } -%>
+         </div>
+       <% } -%>
+
+       <div class="card">
+         <h5 class="card-header">Enter Card Details</h5>
+         <div class="card-body">
+          <form id="form" action="/receipt-page" method="post">
+            <label for="amount">Amount</label>
+            <input type="text" name="amount" id="amount" class="form-control" placeholder="$10.00"> 
+            <div id="dropin-container"></div>
+          
+            <input type="submit" value="Pay" class="btn btn-primary bg-success border-success" id="submit-button" />
+            <input type="hidden" id="nonce" name="nonce" />
+            <input type="hidden" id="paymentType" name="paymentType" />
+            <input type="hidden" id="integrationType" name="integrationType" value="dropin">
+          </form>
+        
+        
+          <script>
+            var button = document.querySelector('#submit-button');
+            var form = document.querySelector('#form');
+            var client_token = "<%= client_token %>";
+        
+            braintree.dropin.create({
+              authorization: '<%= client_token %>',
+              container: '#dropin-container'
+            }, function (createErr, instance) {
+              button.addEventListener('click', function () {
+                instance.requestPaymentMethod(function (err, payload) {
+                  if (err) {
+                    console.log(err)
+                  } else {
+                    console.log(payload);
+                    document.querySelector('#nonce').value = payload.nonce;
+                    document.querySelector('#paymentType').value = payload.type;
+                    console.log(nonce);
+                    form.submit();
+                  }
+                });
+              });
+            });
+          </script>
+  </body>
+</html>

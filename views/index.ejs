@@ -3,131 +3,54 @@
   <head>
     <meta charset="UTF-8">
     <title>Checkout</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
   </head>
   <body>
-    <form action="/checkout" id="my-sample-form" method="post">
+    <div class="container">
+      <h1 class="text-center">Welcome to the Mock Shop</h1>
 
-      <label for="amount">Amount</label>
-      <input type="number" name="amount" id="amount">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="card mt-5">
+            <div class="card-body text-center">
+              <h5 class="card-title">Hosted Fields Form</h5>
+              <p class="card-text">Perform a transaction with the Braintree Hosted Fields Checkout UI.</p>
+              <a href="hosted-fields" class="btn btn-primary btn-lg active col-sm-4" role="button" aria-pressed="true">Checkout</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="card mt-5">
+            <div class="card-body text-center">
+              <h5 class="card-title">Drop-in UI Form</h5>
+              <p class="card-text">Perform a transaction with the Braintree Drop-in UI.</p>
+              <a href="dropin" class="btn btn-primary btn-lg active col-sm-4" role="button" aria-pressed="true">Checkout</a>
+            </div>
+          </div>
+        </div>
 
-      <label for="card-number">Card Number</label>
-      <div id="card-number"></div>
-
-      <label for="cvv">CVV</label>
-      <div id="cvv"></div>
-
-      <label for="expiration-date">Expiration Date</label>
-      <div id="expiration-date"></div>
-
-      <label for="postal-code">Postal Code</label>
-      <div id="postal-code"></div>
-
-      <input type="submit" value="Pay" disabled />
-
-      <input type="hidden" name="nonce" id="nonce" />
-    </form>
-
-    <script src="https://js.braintreegateway.com/web/3.56.0/js/client.min.js"></script>
-    <script src="https://js.braintreegateway.com/web/3.56.0/js/hosted-fields.min.js"></script>
-    <script>
-      var form = document.querySelector('#my-sample-form');
-      var submit = document.querySelector('input[type="submit"]');
-
-      braintree.client.create({
-        authorization: '<%= client_token %>'
-      }, function (clientErr, clientInstance) {
-        if (clientErr) {
-          console.error(clientErr);
-          return;
-        }
-
-
-
-        // CREATE HOSTED FIELDS INSTANCE
-        
-        braintree.hostedFields.create({
-          client: clientInstance,
-          styles: {
-            'input': {
-              'font-size': '14px'
-            },
-            'input.invalid': {
-              'color': 'red'
-            },
-            'input.valid': {
-              'color': 'green'
-            }
-          },
-          fields: {
-            number: {
-              selector: '#card-number',
-              placeholder: '4111 1111 1111 1111',
-              maskInput: {
-                showLastFour: true
-              }
-            },
-            cvv: {
-              selector: '#cvv',
-              placeholder: '123',
-              maskInput: true,
-              type: 'password'
-            },
-            expirationDate: {
-              selector: '#expiration-date',
-              placeholder: '10/2019'
-            },
-            postalCode: {
-              selector: '#postal-code',
-              placeholder: '12345'
-            }
-          }
-        }, function (hostedFieldsErr, hostedFieldsInstance) {
-          if (hostedFieldsErr) {
-            console.error(hostedFieldsErr);
-            return;
-          }
-
-          submit.removeAttribute('disabled');
-
-          form.addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            hostedFieldsInstance.tokenize(function (tokenizeErr, payload) {
-              if (tokenizeErr) {
-                console.error(tokenizeErr);
-                return;
-              }
-              console.log('Got a nonce: ' + payload.nonce);
-              document.querySelector('#nonce').value = payload.nonce;
-              form.submit();
-            });
-          }, false);
-        });
-
-        // END HOSTED FIELDS INSTANCE
-
-      });
-    </script>
+      </div>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="card mt-5">
+            <div class="card-body text-center">
+              <h5 class="card-title">ACH Checkout</h5>
+              <p class="card-text">Perform a transaction with the ACH Direct Debit functionality.</p>
+              <a href="ach" class="btn btn-primary btn-lg active col-sm-4" role="button" aria-pressed="true">ACH</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="card mt-5">
+            <div class="card-body text-center">
+              <h5 class="card-title">Order History Report</h5>
+              <p class="card-text">Generate a list of transactions within the last 3 months.</p>
+              <a href="history" class="btn btn-primary btn-lg active col-sm-4" role="button" aria-pressed="true">Generate</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
-
-
-<!--  <script>
-    var button = document.querySelector('#submit-button');
-    var client_token = "<%= client_token %>";
-    console.log(client_token);
-
-    braintree.dropin.create({
-      authorization: '<%= client_token %>',
-      container: '#dropin-container'
-    }, function (createErr, instance) {
-      button.addEventListener('click', function () {
-        instance.requestPaymentMethod(function (err, payload) {
-          console.log(payload);
-          document.querySelector('#nonce').value = payload.nonce;
-          console.log(nonce);
-          form.submit();
-        });
-      });
-    });
-  </script> -->

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ACH Direct Debit</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+</head>
+<body>
+	<div class="container">
+
+		<!-- Deal with error messages if present -->
+		<% if (messages && messages.length > 0) { -%>
+		   <div class="alert alert-danger" role="alert" id="error">
+		    <% for (var i = 0; i < messages.length; i++) { -%>
+		      <%= messages[i].msg %>
+		    <% } -%>
+		   </div>
+		 <% } -%>
+
+		<div class="card">
+		  <h5 class="card-header">Enter Bank Details</h5>
+		  <div class="card-body">
+		    <form action="/receipt-page" id="ach-form" method="post">
+		      <div class="row mb-3">
+		        <div class="col">
+		           <label for="routing-number">Routing Number</label>
+		           <input type="text" name="routing-number" id="routing-number" class="form-control" placeholder="011000015">                 
+		        </div>
+		        <div class="col">
+		           <label for="account-number">Routing Number</label>
+		           <input type="text" name="account-number" id="account-number" class="form-control" placeholder="1000000000">                 
+		        </div>
+		        <div class="col">
+		        	<label for="ownership-type">Ownership Type</label>
+		        	<div class="form-check">
+		        	  <input class="form-check-input" type="radio" name="ownership-type" id="personal" value="personal" onclick="javascript:personalOrBusiness()">
+		        	  <label class="form-check-label" for="personal">Personal</label>
+		        	</div>
+		        	<div class="form-check">
+		        	  <input class="form-check-input" type="radio" name="ownership-type" id="business" value="business" onclick="javascript:personalOrBusiness()">
+		        	  <label class="form-check-label" for="business">Business</label>
+		        	</div>
+		        </div>
+		        <div class="col">
+		        	<label for="account-type">Account Type</label>
+		        	<div class="form-check">
+		        	  <input class="form-check-input" type="radio" name="account-type" id="checking" value="checking">
+		        	  <label class="form-check-label" for="checking">Checking</label>
+		        	</div>
+		        	<div class="form-check">
+		        	  <input class="form-check-input" type="radio" name="account-type" id="savings" value="savings">
+		        	  <label class="form-check-label" for="savings">Savings</label>
+		        	</div>
+		        </div>
+		      </div>
+		      <div class="row mb-3">
+		        <div class="col">
+		           <label for="first-name" class="personal">First Name</label>
+		           <input type="text" name="first-name" id="first-name" class="form-control personal" placeholder="First Name">
+		        </div>
+		        <div class="col">
+		           <label for="last-name" class="personal">Last Name</label>
+		           <input type="text" name="last-name" id="last-name" class="form-control personal" placeholder="Last Name">
+		        </div>
+		      </div>
+		      <div class="row mb-3">
+		      	<div class="col">
+		      		<label for="business-name" class="business">Business Name</label>
+		      		<input type="text" name="business-name" id="business-name" class="form-control business" placeholder="Business Name">
+		      	</div>
+		      </div>
+		      <hr>
+		      <div class="row mb-3">
+		      	<div class="col">
+		      		<label for="billing-street-address">Street Address</label>
+		      		<input type="text" name="billing-street-address" id="billing-street-address" class="form-control" placeholder="222 W. Merchandise Mart">
+		      	</div>
+		      </div>
+		      <div class="row mb-3">
+		      	<div class="col">
+		      		<label for="billing-extended-address">Extended Street Address</label>
+		      		<input type="text" name="billing-extended-address" id="billing-extended-address" class="form-control" placeholder="STE 800">
+		      	</div>
+		      </div>
+		      <div class="row mb-3">
+		      	<div class="col">
+		      		<label for="billing-locality">City</label>
+		      		<input type="text" name="billing-locality" id="billing-locality" class="form-control" placeholder="Chicago">
+		      	</div>
+		      	<div class="col">
+		      		<label for="billing-region">State</label>
+		      		<input type="text" name="billing-region" id="billing-region" class="form-control" placeholder="IL">
+		      	</div>
+		      	<div class="col">
+		      		<label for="billing-postal-code">Postal Code</label>
+		      		<input type="text" name="billing-postal-code" id="billing-postal-code" class="form-control" placeholder="60610">
+		      	</div>
+		      </div>
+		      <div class="row mb-3">
+		        <div class="col">
+		           <label for="amount">Amount</label>
+		           <input type="text" name="amount" id="amount" class="form-control" placeholder="$10.00">                 
+		        </div>
+		      </div>
+		      <div class="row mb-3">
+		        <div class="col">
+		          <input type="submit" value="Pay" class="btn btn-primary bg-success border-success" />
+		        </div>
+		      </div>
+		      <input type="hidden" name="nonce" id="nonce" />
+		      <input type="hidden" name="paymentType" id="paymentType" />
+		    </form >
+		  </div>
+		</div>
+	</div>
+	<script src="https://js.braintreegateway.com/web/3.56.0/js/client.min.js"></script>
+	<script src="https://js.braintreegateway.com/web/3.56.0/js/us-bank-account.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+	<script>
+
+		// Conditionally display fields of form based on business or personal being selected as the ownershipType
+		function personalOrBusiness() {
+			var personalAttributes = document.querySelectorAll('.personal');
+			var businessAttributes = document.querySelectorAll('.business')
+
+			if (document.querySelector('#personal').checked) {
+				personalAttributes.forEach(function(attribute) {
+				  attribute.style.display = 'block'
+				});
+				businessAttributes.forEach(function(attribute) {
+					attribute.style.display = 'none'
+				});
+			} else if (document.querySelector('#business').checked) {
+				personalAttributes.forEach(function(attribute) {
+				  attribute.style.display = 'none'
+				});
+				businessAttributes.forEach(function(attribute) {
+					attribute.style.display = 'block'
+				});
+			}
+		}
+
+		var form = document.querySelector('#ach-form');
+		var submit = document.querySelector('input[type="submit"]');
+
+		if (document.querySelector('#personal').checked) {
+			document.querySelector('#business-name').style.display = 'none';
+		} else if (document.querySelector('#business').checked) {
+			document.querySelector('#first-name').style.display = 'none';
+			document.querySelector('#last-name').style.display = 'none';
+		}
+
+		braintree.client.create({
+		  authorization: '<%= client_token %>'
+		}, function (clientErr, clientInstance) {
+		  if (clientErr) {
+			console.error('There was an error creating the Client.');
+		    throw clientErr;
+		  }
+		  form.addEventListener('submit', function (event) {
+		  braintree.usBankAccount.create({
+		    client: clientInstance
+		  }, function (usBankAccountErr, usBankAccountInstance) {
+		    var bankDetails = {
+		      accountNumber: $('#account-number').val(),
+		      routingNumber: $('#routing-number').val(),
+		      accountType: $('input[name="account-type"]:checked').val(),
+		      ownershipType: $('input[name="ownership-type"]:checked').val(),
+		      billingAddress: {
+		        streetAddress: $('#billing-street-address').val(),
+		        extendedAddress: $('#billing-extended-address').val(),
+		        locality: $('#billing-locality').val(),
+		        region: $('#billing-region').val(),
+		        postalCode: $('#billing-postal-code').val()
+		      }
+		    };
+
+		    if (bankDetails.ownershipType === 'personal') {
+		      bankDetails.firstName = $('#first-name').val();
+		      bankDetails.lastName = $('#last-name').val();
+		    } else {
+		      bankDetails.businessName = $('#business-name').val();
+		    }
+		    
+		    submit.removeAttribute('disabled');
+
+		    
+		      event.preventDefault();
+		      console.log(bankDetails);
+		    usBankAccountInstance.tokenize({
+		      bankDetails: bankDetails, // or bankLogin: bankLogin
+		      mandateText: 'By clicking ["Checkout"], I authorize Braintree, a service of PayPal, on behalf of Doggie Daycare (i) to verify my bank account information using bank information and consumer reports and (ii) to debit my bank account.'
+		    }, function (tokenizeErr, tokenizedPayload) {
+		      if (tokenizeErr) {
+				console.error('There was an error tokenizing the bank details.');
+				document.getElementById("error").textContent = tokenizeErr.details.originalError.details.originalError[0].message;
+				throw tokenizeErr;
+				form.reset();
+		      } else {
+				document.querySelector('#nonce').value = tokenizedPayload.nonce;
+				document.querySelector('#paymentType').value = tokenizedPayload.type;
+				form.submit();
+			  }
+		    });
+		   });
+		  });
+		});
+	</script>
+</body>
+</html>

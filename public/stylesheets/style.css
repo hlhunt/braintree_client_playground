@@ -6,3 +6,8 @@ body {
 a {
   color: #00B7FF;
 }
+
+.payment-fields {
+	height: 16px;
+	width: 150px;
+}
