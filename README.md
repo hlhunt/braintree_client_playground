@@ -1,4 +1,4 @@
-# API Support Challenge Project
+# Braintree Payment Method Playground
 
 ## Setup Instructions
 
@@ -17,5 +17,3 @@
    ```
    
    By default, this runs the app on port `3000` (i.e. `localhost:3000`. You can configure the port by setting the environmental variable `PORT`.
-
-4. Once on the home page, you can choose to go to the checkout form by selecting 'Checkout', or you can generate a table of the transactions in the last 3 months for your Braintree sandbox by clicking 'Generate'.
