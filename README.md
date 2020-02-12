@@ -1,10 +1,6 @@
-<<<<<<< HEAD
-# Braintree Payment Method Playground
-=======
 # Braintree Client-side Playground
 
 The purpose of this repository is to showcase the various payment method options offered through the Braintree SDKs. If you'd like to learn more about Braintree's product offerings and features, I would recommend visting their [marketing website](https://www.braintreepayments.com/), [developer documentation](https://developers.braintreepayments.com/), and [support articles](https://articles.braintreepayments.com/).
->>>>>>> 46d9da37b132ad6f88dd4e50f6eb781c45d3f98e
 
 ## Setup Instructions
 
@@ -22,9 +18,6 @@ The purpose of this repository is to showcase the various payment method options
    npm start
    ```
    
-<<<<<<< HEAD
-   By default, this runs the app on port `3000` (i.e. `localhost:3000`. You can configure the port by setting the environmental variable `PORT`.
-=======
    By default, this runs the app on port `3000` (i.e. `localhost:3000`. You can configure the port by setting the environmental variable `PORT`.
 
 4. Once on the home page, you can choose to go to each of the various features listed:
@@ -34,4 +27,3 @@ The purpose of this repository is to showcase the various payment method options
    * [Transaction Search API (i.e. `transaction.search`)](https://developers.braintreepayments.com/reference/request/transaction/search/node)
 
 *If you need testing values for the checkout forms, please reference the relevant testing documentation on the [Testing](https://developers.braintreepayments.com/reference/general/testing/node) and [ACH Direct Debit Testing Developer Documentation](https://developers.braintreepayments.com/guides/ach/testing-go-live).*
->>>>>>> 46d9da37b132ad6f88dd4e50f6eb781c45d3f98e
